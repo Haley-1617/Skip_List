@@ -18,6 +18,7 @@ public:
    Node(int data, int lv);
 };
 
+//Default Constructor for Node class
 Node::Node(int data, int lv) {
    this->data = data;
    level = new Node*[lv]();
@@ -31,13 +32,13 @@ private:
 
 public:
    Skip_List();
-   Skip_List(const Skip_List &rhs);
+   Skip_List(Skip_List &rhs);
    ~Skip_List();
    void insert(int value, int lv);
    void remove(const int &value);
    Node* find(const int &value);
+   int height(const int &value);
    void display();
-   int size(Node &node);
    Skip_List& operator=(const Skip_List &rhs);
 
 };
@@ -48,6 +49,21 @@ const float Skip_List::P = 2.5;
 //Default Constructor for Skip_List
 Skip_List::Skip_List() {
    head = new Node(0, MAX_H);
+}
+
+//Copy Constructor
+Skip_List::Skip_List(Skip_List &rhs) {
+   head = new Node(0, MAX_H);
+   int firstLv = 0;
+   Node *temp = rhs.head->level[firstLv];
+   if(temp == NULL) Skip_List();
+   else {
+      while(temp->level[firstLv]) {
+         this->insert(temp->data, rhs.height(temp->data));
+         temp = temp->level[firstLv];
+      }
+      this->insert(temp->data, rhs.height(temp->data));
+   }
 }
 
 //Deconstructor
@@ -80,6 +96,7 @@ void Skip_List::insert(int value, int lv) {
    }
 }
 
+//remove value from each level in the list
 void Skip_List::remove(const int &value) {
    int lv = 0;
    Node *arr = find(value);
@@ -99,6 +116,7 @@ void Skip_List::remove(const int &value) {
    }
 }
 
+//return a pointer of node which include value's position in each level
 Node* Skip_List::find(const int &value) {
    Node *arr = new Node(0, MAX_H);
    for (int lv = 0; lv < MAX_H; lv++) {
@@ -115,6 +133,19 @@ Node* Skip_List::find(const int &value) {
       if(arr->level[lv] != temp) arr->level[lv] = NULL;
    }
    return arr;
+}
+
+//return the height of the input value
+int Skip_List::height(const int &value) {
+   int h = 0;
+   for(int lv = 0; lv < MAX_H; lv++) {
+      Node *temp = head->level[lv];
+      if(temp == NULL) continue;
+      while(temp->level[lv] != NULL && temp->data != value)
+         temp = temp->level[lv];
+      if(temp->data == value) h++;
+   }
+   return h;
 }
 
 //display the list
@@ -136,6 +167,11 @@ void Skip_List::display() {
 
 int main(int argc, const char * argv[]) {
    Skip_List test;
+
+   cout <<
+   "-----------------------------------------" << endl <<
+   "               test insert()             " << endl <<
+   "-----------------------------------------" << endl;
    test.insert(1, 5);
    test.insert(2, 4);
    test.insert(3, 3);
@@ -147,6 +183,24 @@ int main(int argc, const char * argv[]) {
    test.insert(9, 2);
    test.insert(10, 1);
    test.display();
+
+   cout <<
+   "-----------------------------------------" << endl <<
+   "          test Copy Constructor          " << endl <<
+   "-----------------------------------------" << endl;
+   Skip_List copy(test);
+   copy.display();
+   copy.remove(3);
+   copy.remove(4);
+   copy.display();
+   test.display();
+   copy.insert(3, 3);
+   copy.display();
+   /*
+   cout <<
+   "-----------------------------------------" << endl <<
+   "               test remove()             " << endl <<
+   "-----------------------------------------" << endl;
    test.remove(11);
    test.display();
    test.remove(2);
@@ -158,6 +212,21 @@ int main(int argc, const char * argv[]) {
    test.remove(71);
    test.remove(8);
    test.remove(9);
-   test.display();
+   test.display();*/
+   cout <<
+   "-----------------------------------------" << endl <<
+   "               test height()             " << endl <<
+   "-----------------------------------------" << endl;
+   cout << test.height(1) << endl;
+   cout << test.height(2) << endl;
+   cout << test.height(3) << endl;
+   cout << test.height(4) << endl;
+   cout << test.height(5) << endl;
+   cout << test.height(6) << endl;
+   cout << test.height(7) << endl;
+   cout << test.height(8) << endl;
+   cout << test.height(9) << endl;
+   cout << test.height(10) << endl;
+   cout << test.height(11) << endl;
    return 0;
 }
