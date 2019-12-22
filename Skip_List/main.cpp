@@ -83,7 +83,7 @@ void Skip_List::insert(int value, int lv) {
 void Skip_List::remove(const int &value) {
    int lv = 0;
    Node *arr = find(value);
-   while(arr->level[lv]) {
+   while(lv < MAX_H && arr->level[lv]) {
       Node *temp = head->level[lv];
       while(arr->level[lv] != temp) {
          temp = temp->level[lv];
@@ -92,6 +92,7 @@ void Skip_List::remove(const int &value) {
       lv++;
    }
    for (lv = 0;lv < MAX_H; lv++){
+      //skip empty level
       if(head->level[lv] == NULL) continue;
       if(head->level[lv]->data == value)
          head->level[lv] = head->level[lv]->level[lv];
@@ -102,6 +103,7 @@ Node* Skip_List::find(const int &value) {
    Node *arr = new Node(0, MAX_H);
    for (int lv = 0; lv < MAX_H; lv++) {
       Node *temp = head->level[lv];
+      // if a level doesn't contain any number, we skip it.
       if(temp == NULL) continue;
       while(temp->level[lv] != NULL) {
          if (temp->level[lv]->data == value) {
@@ -145,13 +147,15 @@ int main(int argc, const char * argv[]) {
    test.insert(9, 2);
    test.insert(10, 1);
    test.display();
-   test.remove(1);
+   test.remove(11);
+   test.display();
    test.remove(2);
    test.remove(3);
    test.remove(4);
-   test.remove(5);
+   test.remove(51);
+   test.display();
    test.remove(6);
-   test.remove(7);
+   test.remove(71);
    test.remove(8);
    test.remove(9);
    test.display();
