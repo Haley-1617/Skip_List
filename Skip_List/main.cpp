@@ -34,7 +34,8 @@ public:
    Skip_List(const Skip_List &rhs);
    ~Skip_List();
    void insert(int value, int lv);
-//   void remove(const int &value);
+   void remove(const int &value);
+   Node* find(const int &value);
    void display();
    int size(Node &node);
    Skip_List& operator=(const Skip_List &rhs);
@@ -79,6 +80,41 @@ void Skip_List::insert(int value, int lv) {
    }
 }
 
+void Skip_List::remove(const int &value) {
+   int lv = 0;
+   Node *arr = find(value);
+   while(arr->level[lv]) {
+      Node *temp = head->level[lv];
+      while(arr->level[lv] != temp) {
+         temp = temp->level[lv];
+      }
+      temp->level[lv] = temp->level[lv]->level[lv];
+      lv++;
+   }
+   for (lv = 0;lv < MAX_H; lv++){
+      if(head->level[lv] == NULL) continue;
+      if(head->level[lv]->data == value)
+         head->level[lv] = head->level[lv]->level[lv];
+   }
+}
+
+Node* Skip_List::find(const int &value) {
+   Node *arr = new Node(0, MAX_H);
+   for (int lv = 0; lv < MAX_H; lv++) {
+      Node *temp = head->level[lv];
+      if(temp == NULL) continue;
+      while(temp->level[lv] != NULL) {
+         if (temp->level[lv]->data == value) {
+            arr->level[lv] = temp;
+            break;
+         }
+         temp = temp->level[lv];
+      }
+      if(arr->level[lv] != temp) arr->level[lv] = NULL;
+   }
+   return arr;
+}
+
 //display the list
 void Skip_List::display() {
    for (int lv = MAX_H - 1; lv >= 0; lv--) {
@@ -108,6 +144,16 @@ int main(int argc, const char * argv[]) {
    test.insert(8, 3);
    test.insert(9, 2);
    test.insert(10, 1);
+   test.display();
+   test.remove(1);
+   test.remove(2);
+   test.remove(3);
+   test.remove(4);
+   test.remove(5);
+   test.remove(6);
+   test.remove(7);
+   test.remove(8);
+   test.remove(9);
    test.display();
    return 0;
 }
